@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import TimerDisplay from './components/TimerDisplay';
 import Controls from './components/Controls';
 import Settings from './components/Settings';
-import Notification from './components/Notification';
 import ForcedRestOverlay from './components/ForcedRestOverlay';
 
 const eyeExercises = [
@@ -19,11 +17,9 @@ const App: React.FC = () => {
   const [workMinutes, setWorkMinutes] = useState(20);
   const [restSeconds, setRestSeconds] = useState(20);
 
-  const [totalSeconds, setTotalSeconds] = useState(workMinutes * 60);
   const [secondsLeft, setSecondsLeft] = useState(workMinutes * 60);
   const [isActive, setIsActive] = useState(false);
   const [isWorkSession, setIsWorkSession] = useState(true);
-  const [showNotification, setShowNotification] = useState(false);
   const [currentExercise, setCurrentExercise] = useState(eyeExercises[0]);
 
 
@@ -32,7 +28,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (typeof Audio !== 'undefined') {
         // Use a base64 data URI to avoid external network requests and potential errors.
-        notificationSoundRef.current = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjQwLjEwMQAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-');
+        notificationSoundRef.current = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjQwLjEwMQAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-');
         notificationSoundRef.current.volume = 0.5;
     }
   }, []);
@@ -40,7 +36,6 @@ const App: React.FC = () => {
   const resetTimer = useCallback((isWork: boolean) => {
     setIsWorkSession(isWork);
     const newTotal = isWork ? workMinutes * 60 : restSeconds;
-    setTotalSeconds(newTotal);
     setSecondsLeft(newTotal);
   }, [workMinutes, restSeconds]);
   
@@ -69,10 +64,8 @@ const App: React.FC = () => {
             setCurrentExercise(eyeExercises[randomIndex]);
             resetTimer(false); // Switch to rest session parameters
         } else {
-            // Rest session ended. Stop the timer and show a notification to go back to work.
-            setIsActive(false);
-            setShowNotification(true);
-            resetTimer(true); // Prepare for the next work session
+            // Rest session ended. Automatically start the next work session.
+            resetTimer(true); // Switch to work session parameters
         }
     }
 
@@ -91,17 +84,13 @@ const App: React.FC = () => {
     setIsActive(false);
     resetTimer(true);
   };
-
-  const handleNotificationDismiss = () => {
-    setShowNotification(false);
-    setIsActive(true); // Automatically start the next session
-  };
   
   const handleSettingsChange = (newWorkMinutes: number, newRestSeconds: number) => {
     setWorkMinutes(newWorkMinutes);
     setRestSeconds(newRestSeconds);
   };
 
+  const totalSeconds = isWorkSession ? workMinutes * 60 : restSeconds;
   const progress = totalSeconds > 0 ? (secondsLeft / totalSeconds) * 100 : 0;
 
 
@@ -136,15 +125,6 @@ const App: React.FC = () => {
           />
         </footer>
       </div>
-
-      <Notification
-        show={showNotification}
-        isWorkSession={isWorkSession}
-        onDismiss={handleNotificationDismiss}
-        restSeconds={restSeconds}
-        workMinutes={workMinutes}
-        exercise={currentExercise}
-      />
 
       {isActive && !isWorkSession && (
         <ForcedRestOverlay 
