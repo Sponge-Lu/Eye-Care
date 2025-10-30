@@ -1,0 +1,5 @@
+{
+  "name": "Eye Care Reminder",
+  "description": "A desktop application to remind you to rest your eyes using the 20-20-20 rule and guided eye exercises. Every 20 minutes, it prompts you with a short exercise to reduce eye strain.",
+  "requestFramePermissions": []
+}
